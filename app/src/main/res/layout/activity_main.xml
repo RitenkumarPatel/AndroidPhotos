@@ -20,6 +20,17 @@
         tools:listitem="@layout/album_item" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="16dp"
+        android:contentDescription="Search Photos"
+        app:layout_constraintBottom_toTopOf="@+id/fab_add_album"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_search" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_album"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

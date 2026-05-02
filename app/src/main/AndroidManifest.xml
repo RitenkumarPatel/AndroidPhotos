@@ -33,6 +33,11 @@
             android:label="Photo View"
             android:parentActivityName=".AlbumPhotosActivity"
             android:theme="@style/Theme.PhotosApplication" />
+        <activity
+            android:name=".SearchActivity"
+            android:label="Search Photos"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.PhotosApplication" />
     </application>
 
 </manifest>

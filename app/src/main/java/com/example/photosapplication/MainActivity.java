@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private FloatingActionButton fabAddAlbum;
+    private FloatingActionButton fabSearch;
     private User currentUser;
     private AlbumAdapter adapter;
 
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
         // 1. Initialize UI components
         recyclerView = findViewById(R.id.album_recycler_view);
         fabAddAlbum = findViewById(R.id.fab_add_album);
+        fabSearch = findViewById(R.id.fab_search);
 
         // 2. Load Data (assuming single-user focus)
         loadData();
@@ -51,8 +53,9 @@ public class MainActivity extends AppCompatActivity {
         });
         recyclerView.setAdapter(adapter);
 
-        // 4. Handle FAB Click (Logic for adding an album)
+        // 4. Handle FAB Click (Logic for adding an album and search)
         fabAddAlbum.setOnClickListener(v -> showAddAlbumDialog());
+        fabSearch.setOnClickListener(v -> startActivity(new Intent(this, SearchActivity.class)));
     }
 
     @Override

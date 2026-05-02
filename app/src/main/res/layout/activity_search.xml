@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:fitsSystemWindows="true">
+
+    <!-- Clause 1 -->
+    <TextView
+        android:id="@+id/label_clause1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Search Clause 1:"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Spinner
+        android:id="@+id/spinner_type1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/input_value1"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/label_clause1" />
+
+    <EditText
+        android:id="@+id/input_value1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Value"
+        android:inputType="text"
+        app:layout_constraintBottom_toBottomOf="@id/spinner_type1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_weight="2"
+        app:layout_constraintStart_toEndOf="@id/spinner_type1"
+        app:layout_constraintTop_toTopOf="@id/spinner_type1" />
+
+    <!-- Operator -->
+    <RadioGroup
+        android:id="@+id/radio_operator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/input_value1">
+
+        <RadioButton
+            android:id="@+id/radio_none"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Single" />
+
+        <RadioButton
+            android:id="@+id/radio_and"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AND" />
+
+        <RadioButton
+            android:id="@+id/radio_or"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OR" />
+    </RadioGroup>
+
+    <!-- Clause 2 -->
+    <TextView
+        android:id="@+id/label_clause2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Search Clause 2:"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/radio_operator" />
+
+    <Spinner
+        android:id="@+id/spinner_type2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/input_value2"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/label_clause2" />
+
+    <EditText
+        android:id="@+id/input_value2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Value"
+        android:inputType="text"
+        app:layout_constraintBottom_toBottomOf="@id/spinner_type2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_weight="2"
+        app:layout_constraintStart_toEndOf="@id/spinner_type2"
+        app:layout_constraintTop_toTopOf="@id/spinner_type2" />
+
+    <Button
+        android:id="@+id/btn_search"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Search"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/input_value2" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/search_results_recycler"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btn_search"
+        tools:listitem="@layout/photo_item" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
