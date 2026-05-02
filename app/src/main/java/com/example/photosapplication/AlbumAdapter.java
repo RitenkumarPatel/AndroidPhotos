@@ -15,7 +15,7 @@ import java.util.Locale;
 
 public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumViewHolder> {
 
-    private final List<Album> albums;
+    private List<Album> albums;
     private final OnAlbumClickListener listener;
 
     public interface OnAlbumClickListener {
@@ -44,6 +44,11 @@ public class AlbumAdapter extends RecyclerView.Adapter<AlbumAdapter.AlbumViewHol
     @Override
     public int getItemCount() {
         return albums.size();
+    }
+
+    public void updateData(List<Album> newAlbums) {
+        this.albums = newAlbums;
+        notifyDataSetChanged();
     }
 
     static class AlbumViewHolder extends RecyclerView.ViewHolder {

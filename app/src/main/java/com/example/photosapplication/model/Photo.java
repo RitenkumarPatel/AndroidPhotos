@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Represents a single photo in the application.
@@ -66,5 +67,18 @@ public class Photo implements Serializable {
 
     public void removeTag(Tag tag) {
         tags.remove(tag);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Photo)) return false;
+        Photo photo = (Photo) o;
+        return Objects.equals(uriString, photo.uriString);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uriString);
     }
 }

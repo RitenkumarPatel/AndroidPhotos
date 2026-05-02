@@ -55,6 +55,15 @@ public class MainActivity extends AppCompatActivity {
         fabAddAlbum.setOnClickListener(v -> showAddAlbumDialog());
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadData();
+        if (adapter != null && currentUser != null) {
+            adapter.updateData(currentUser.getAlbums());
+        }
+    }
+
     private void loadData() {
         try {
             List<User> users = PersistenceManager.load(this);

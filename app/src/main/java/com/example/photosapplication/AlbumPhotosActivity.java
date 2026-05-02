@@ -7,6 +7,7 @@ import com.example.photosapplication.R;
 import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -68,11 +69,19 @@ public class AlbumPhotosActivity extends AppCompatActivity {
         fabAddPhoto = findViewById(R.id.fab_add_photo);
 
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-        adapter = new PhotoAdapter(album.getPhotos(), (photo, position) -> {
-            Intent intent = new Intent(this, PhotoDisplayActivity.class);
-            intent.putExtra("ALBUM_NAME", albumName);
-            intent.putExtra("PHOTO_INDEX", position);
-            startActivity(intent);
+        adapter = new PhotoAdapter(album.getPhotos(), new PhotoAdapter.OnPhotoClickListener() {
+            @Override
+            public void onPhotoClick(Photo photo, int position) {
+                Intent intent = new Intent(AlbumPhotosActivity.this, PhotoDisplayActivity.class);
+                intent.putExtra("ALBUM_NAME", albumName);
+                intent.putExtra("PHOTO_INDEX", position);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onPhotoLongClick(Photo photo, int position) {
+                showPhotoOptionsDialog(photo, position);
+            }
         });
         recyclerView.setAdapter(adapter);
 
@@ -95,8 +104,8 @@ public class AlbumPhotosActivity extends AppCompatActivity {
         super.onResume();
         // Reload data in case captions/tags were changed in the display activity
         loadData();
-        if (adapter != null) {
-            adapter.notifyDataSetChanged();
+        if (adapter != null && album != null) {
+            adapter.updateData(album.getPhotos());
         }
     }
 
@@ -134,5 +143,77 @@ public class AlbumPhotosActivity extends AppCompatActivity {
         album.addPhoto(newPhoto);
         saveData();
         adapter.notifyItemInserted(album.getPhotos().size() - 1);
+    }
+
+    private void showPhotoOptionsDialog(Photo photo, int position) {
+        String[] options = {"Move to another album", "Delete Photo"};
+        new AlertDialog.Builder(this)
+                .setTitle("Photo Options")
+                .setItems(options, (dialog, which) -> {
+                    if (which == 0) {
+                        showMovePhotoDialog(photo, position);
+                    } else if (which == 1) {
+                        showDeletePhotoConfirmDialog(photo, position);
+                    }
+                })
+                .show();
+    }
+
+    private void showDeletePhotoConfirmDialog(Photo photo, int position) {
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Photo")
+                .setMessage("Are you sure you want to remove this photo from the album?")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    album.removePhoto(photo);
+                    saveData();
+                    adapter.notifyItemRemoved(position);
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void showMovePhotoDialog(Photo photo, int position) {
+        List<Album> otherAlbums = new ArrayList<>();
+        for (Album a : currentUser.getAlbums()) {
+            if (!a.getName().equals(album.getName())) {
+                otherAlbums.add(a);
+            }
+        }
+
+        if (otherAlbums.isEmpty()) {
+            Toast.makeText(this, "No other albums available", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String[] albumNames = new String[otherAlbums.size()];
+        for (int i = 0; i < otherAlbums.size(); i++) {
+            albumNames[i] = otherAlbums.get(i).getName();
+        }
+
+        new AlertDialog.Builder(this)
+                .setTitle("Move to Album")
+                .setItems(albumNames, (dialog, which) -> {
+                    Album targetAlbum = otherAlbums.get(which);
+                    
+                    // Check if photo already exists in target album
+                    boolean exists = false;
+                    for (Photo p : targetAlbum.getPhotos()) {
+                        if (p.getUriString().equals(photo.getUriString())) {
+                            exists = true;
+                            break;
+                        }
+                    }
+
+                    if (exists) {
+                        Toast.makeText(this, "Photo already exists in " + targetAlbum.getName(), Toast.LENGTH_SHORT).show();
+                    } else {
+                        targetAlbum.addPhoto(photo);
+                        album.removePhoto(photo);
+                        saveData();
+                        adapter.notifyItemRemoved(position);
+                        Toast.makeText(this, "Moved to " + targetAlbum.getName(), Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .show();
     }
 }
