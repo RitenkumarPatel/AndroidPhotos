@@ -1,9 +1,11 @@
 package com.example.photosapplication;
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
@@ -24,7 +26,7 @@ import java.util.Set;
 public class SearchActivity extends AppCompatActivity {
 
     private Spinner spinnerType1, spinnerType2;
-    private EditText inputValue1, inputValue2;
+    private AutoCompleteTextView inputValue1, inputValue2;
     private RadioGroup radioOperator;
     private RadioButton radioSingle, radioAnd, radioOr;
     private RecyclerView resultsRecycler;
@@ -58,17 +60,18 @@ public class SearchActivity extends AppCompatActivity {
         spinnerType1.setAdapter(spinnerAdapter);
         spinnerType2.setAdapter(spinnerAdapter);
 
+        loadAllPhotos();
+        setupAutocomplete();
+
         resultsRecycler.setLayoutManager(new GridLayoutManager(this, 3));
         adapter = new PhotoAdapter(searchResults, new PhotoAdapter.OnPhotoClickListener() {
             @Override
             public void onPhotoClick(Photo photo, int position) {
-                // For search results, we just show a toast for now
                 Toast.makeText(SearchActivity.this, "Result photo selected", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onPhotoLongClick(Photo photo, int position) {
-                // No options for search result items
             }
         });
         resultsRecycler.setAdapter(adapter);
@@ -96,6 +99,44 @@ public class SearchActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void setupAutocomplete() {
+        AdapterView.OnItemSelectedListener listener = new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                updateAutocompleteSuggestions();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        };
+
+        spinnerType1.setOnItemSelectedListener(listener);
+        spinnerType2.setOnItemSelectedListener(listener);
+        updateAutocompleteSuggestions();
+    }
+
+    private void updateAutocompleteSuggestions() {
+        String type1 = spinnerType1.getSelectedItem().toString();
+        String type2 = spinnerType2.getSelectedItem().toString();
+
+        Set<String> values1 = new HashSet<>();
+        Set<String> values2 = new HashSet<>();
+
+        for (Photo photo : allPhotos) {
+            for (Tag tag : photo.getTags()) {
+                if (tag.getName().equalsIgnoreCase(type1)) {
+                    values1.add(tag.getValue());
+                }
+                if (tag.getName().equalsIgnoreCase(type2)) {
+                    values2.add(tag.getValue());
+                }
+            }
+        }
+
+        inputValue1.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, new ArrayList<>(values1)));
+        inputValue2.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, new ArrayList<>(values2)));
     }
 
     private void performSearch() {
@@ -141,7 +182,9 @@ public class SearchActivity extends AppCompatActivity {
     private boolean matches(Photo photo, String type, String value) {
         if (value.isEmpty()) return false;
         for (Tag tag : photo.getTags()) {
-            if (tag.getName().equalsIgnoreCase(type) && tag.getValue().equalsIgnoreCase(value)) {
+            // Requirement: "Matches should allow auto completion, given a starting substring"
+            // The search should also follow this logic.
+            if (tag.getName().equalsIgnoreCase(type) && tag.getValue().toLowerCase().startsWith(value.toLowerCase())) {
                 return true;
             }
         }
