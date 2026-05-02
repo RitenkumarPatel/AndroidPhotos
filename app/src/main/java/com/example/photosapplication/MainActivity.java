@@ -1,5 +1,6 @@
 package com.example.photosapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -38,8 +39,9 @@ public class MainActivity extends AppCompatActivity {
         adapter = new AlbumAdapter(currentUser.getAlbums(), new AlbumAdapter.OnAlbumClickListener() {
             @Override
             public void onAlbumClick(Album album) {
-                // TODO: Open album photos view
-                Toast.makeText(MainActivity.this, "Selected: " + album.getName(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, AlbumPhotosActivity.class);
+                intent.putExtra("ALBUM_NAME", album.getName());
+                startActivity(intent);
             }
 
             @Override
